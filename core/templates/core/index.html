@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Agro-Économique Cameroun - 5GI</title>
+
+    <!-- FONTS & ICONS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS LIBRARIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --primary-color: #2ecc71;  /* Vert Émeraude */
+            --secondary-color: #3498db; /* Bleu */
+            --accent-color: #e74c3c;    /* Rouge */
+            --dark-bg: #2c3e50;         /* Bleu Nuit */
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background: #ecf0f1;
+        }
+
+        /* MAP CONTAINER */
+        #map {
+            height: 100vh;
+            width: 100%;
+            z-index: 1;
+        }
+
+        /* SIDEBAR PRO (GAUCHE) */
+        .sidebar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            bottom: 20px;
+            width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            background: var(--dark-bg);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        /* SEARCH BAR FLOTTANTE (DROITE) */
+        .search-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* FILTRES FLOTTANTS */
+        .filter-container {
+            position: absolute;
+            top: 90px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .btn-filter {
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: block;
+            width: 100%;
+            text-align: right;
+            border-right: 5px solid transparent;
+        }
+
+        .btn-filter:hover, .btn-filter.active {
+            background: var(--dark-bg);
+            color: white;
+            transform: translateX(-5px);
+            border-right: 5px solid var(--primary-color);
+        }
+
+        #btn-compare.active-mode {
+            background: var(--accent-color) !important;
+            color: white !important;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        /* CHART CONTAINER */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* MODALE GLASS EFFECT */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+
+        /* LOADER */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div id="loader">
+        <div class="text-center">
+            <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;"></div>
+            <h4 class="mt-3 text-muted">Initialisation du Système SIG...</h4>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-leaf"></i> AGRO-MAP 2026</h3>
+            <small>Projet Web-Mapping 5GI</small>
+        </div>
+        <div class="sidebar-content" id="sidebar-details">
+            <!-- Contenu par défaut -->
+            <div class="text-center text-muted mt-5">
+                <i class="fas fa-mouse-pointer fa-3x mb-3"></i>
+                <p>Cliquez sur un département pour afficher les statistiques de production.</p>
+                <hr>
+                <div class="alert alert-light text-start border">
+                    <small><i class="fas fa-info-circle"></i> <strong>Astuce :</strong> Utilisez le bouton "Comparateur" à droite pour confronter les performances de deux départements.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECHERCHE -->
+    <div class="search-container">
+        <select id="search-box" style="width: 100%;">
+            <option></option> <!-- Placeholder -->
+        </select>
+    </div>
+
+    <!-- FILTRES RAPIDES -->
+    <div class="filter-container">
+        <!-- Bouton Comparateur -->
+        <button class="btn-filter" id="btn-compare" onclick="toggleComparisonMode()" style="border-right-color: #e74c3c;">
+            <i class="fas fa-balance-scale-right"></i> Mode Comparateur <span id="comp-status" class="badge bg-light text-dark ms-2">OFF</span>
+        </button>
+        <hr>
+        <!-- Filtres Thématiques -->
+        <button class="btn-filter active" onclick="resetMap()"><i class="fas fa-globe-africa"></i> Vue Générale</button>
+        <button class="btn-filter" onclick="filterMap('Cacao')"><i class="fas fa-chocolate"></i> Carte du Cacao</button>
+        <button class="btn-filter" onclick="filterMap('Coton')"><i class="fas fa-tshirt"></i> Carte du Coton</button>
+        <button class="btn-filter" onclick="filterMap('Café')"><i class="fas fa-coffee"></i> Carte du Café</button>
+        <button class="btn-filter" onclick="filterMap('Bovins')"><i class="fas fa-horse-head"></i> Carte Élevage Bovin</button>
+    </div>
+
+    <!-- CARTE -->
+    <div id="map"></div>
+
+    <!-- MODALE DE COMPARAISON -->
+    <div class="modal fade" id="comparisonModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content glass-effect">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-balance-scale"></i> Comparateur de Bassins</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row text-center mb-4 align-items-center">
+                        <div class="col-5">
+                            <h3 id="comp-name-1" class="fw-bold" style="color: #2ecc71;">Zone A</h3>
+                            <h5 id="comp-vol-1" class="text-muted">0 T</h5>
+                        </div>
+                        <div class="col-2">
+                            <i class="fas fa-vs fa-2x text-muted"></i>
+                        </div>
+                        <div class="col-5">
+                            <h3 id="comp-name-2" class="fw-bold" style="color: #e74c3c;">Zone B</h3>
+                            <h5 id="comp-vol-2" class="text-muted">0 T</h5>
+                        </div>
+                    </div>
+                    <div style="height: 350px;">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS LIBRARIES -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- 1. CONFIGURATION INITIALE ---
+        var map = L.map('map', { zoomControl: false }).setView([7.3697, 12.3547], 6);
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        // Fond de carte "Positron" (Clean & Pro)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; CARTO',
+            maxZoom: 19
+        }).addTo(map);
+
+        var geojsonLayer;
+        var allData = []; // Pour la recherche
+        var currentChart = null; // Graphique Sidebar
+        var compareChart = null; // Graphique Comparaison
+        var selectedLayer = null;
+
+        // Variables d'état
+        var comparisonMode = false;
+        var compareList = [];
+
+        // --- 2. STYLES CARTO ---
+        function getColor(region) {
+            // Palette de couleurs harmonieuse
+            const colors = {
+                'Adamaoua': '#f1c40f', 'Centre': '#e67e22', 'Est': '#27ae60',
+                'Far North': '#c0392b', 'Littoral': '#2980b9', 'North': '#e74c3c',
+                'North-West': '#8e44ad', 'South': '#16a085', 'South-West': '#d35400',
+                'West': '#f39c12'
+            };
+            return colors[region] || '#95a5a6';
+        }
+
+        function defaultStyle(feature) {
+            return {
+                fillColor: getColor(feature.properties.nom_region),
+                weight: 1,
+                opacity: 1,
+                color: 'white',
+                dashArray: '',
+                fillOpacity: 0.6
+            };
+        }
+
+        function highlightFeature(e) {
+            var layer = e.target;
+            // On ne surligne pas si c'est déjà sélectionné ou en cours de comparaison
+            if (layer !== selectedLayer && !compareList.includes(layer)) {
+                layer.setStyle({ weight: 2, color: '#666', fillOpacity: 0.8 });
+            }
+        }
+
+        function resetHighlight(e) {
+            var layer = e.target;
+            if (layer !== selectedLayer && !compareList.includes(layer)) {
+                geojsonLayer.resetStyle(layer);
+            }
+        }
+
+        // --- 3. LOGIQUE COMPARATEUR (KILLER FEATURE) ---
+        function toggleComparisonMode() {
+            comparisonMode = !comparisonMode;
+            const btn = document.getElementById('btn-compare');
+            const status = document.getElementById('comp-status');
+
+            // Reset complet
+            compareList.forEach(l => geojsonLayer.resetStyle(l));
+            compareList = [];
+            if(selectedLayer) geojsonLayer.resetStyle(selectedLayer);
+            selectedLayer = null;
+
+            if (comparisonMode) {
+                // ACTIVATION
+                btn.classList.add('active-mode');
+                status.innerText = "ON";
+                status.classList.replace('bg-light', 'bg-danger');
+                status.classList.add('text-white');
+
+                // Cacher la sidebar pour laisser place à l'action
+                document.querySelector('.sidebar').style.transform = 'translateX(-120%)';
+
+                // Notification utilisateur
+                alert("MODE COMPARATEUR ACTIVÉ :\n1. Cliquez sur le premier département.\n2. Cliquez sur le second département.\n3. Comparez !");
+
+            } else {
+                // DÉSACTIVATION
+                btn.classList.remove('active-mode');
+                status.innerText = "OFF";
+                status.classList.replace('bg-danger', 'bg-light');
+                status.classList.remove('text-white');
+
+                // Réafficher sidebar
+                document.querySelector('.sidebar').style.transform = 'translateX(0)';
+            }
+        }
+
+        function handleComparisonClick(layer) {
+            // Empêcher de sélectionner 2 fois le même
+            if (compareList.includes(layer)) {
+                geojsonLayer.resetStyle(layer);
+                compareList = compareList.filter(l => l !== layer);
+                return;
+            }
+
+            if (compareList.length < 2) {
+                compareList.push(layer);
+
+                // Style visuel distinctif
+                const color = compareList.length === 1 ? '#2ecc71' : '#e74c3c';
+                layer.setStyle({
+                    weight: 4,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.6
+                });
+                layer.bringToFront();
+
+                if (compareList.length === 2) {
+                    setTimeout(() => showComparisonModal(), 600);
+                }
+            }
+        }
+
+        // Fonction utilitaire pour grouper les volumes par secteur
+        function getSectorTotals(props) {
+            let totals = { 'AGRICULTURE': 0, 'ELEVAGE': 0, 'PECHE': 0 };
+
+            if (props.productions) {
+                props.productions.forEach(p => {
+                    let sec = p.secteur.toUpperCase();
+                    if (sec.includes('AGRI')) totals['AGRICULTURE'] += p.volume_tonnes;
+                    else if (sec.includes('ELEV') || sec.includes('BETAIL') || sec.includes('BOVIN')) totals['ELEVAGE'] += p.volume_tonnes;
+                    else if (sec.includes('PECHE') || sec.includes('HALIEU')) totals['PECHE'] += p.volume_tonnes;
+                });
+            }
+            return totals;
+        }
+
+        function showComparisonModal() {
+            const d1 = compareList[0].feature.properties;
+            const d2 = compareList[1].feature.properties;
+
+            // Remplissage des noms
+            document.getElementById('comp-name-1').innerText = d1.nom_departement;
+            document.getElementById('comp-name-2').innerText = d2.nom_departement;
+
+            // Calculs pour l'affichage chiffré
+            const v1 = d1.productions ? d1.productions.reduce((sum, p) => sum + p.volume_tonnes, 0) : 0;
+            const v2 = d2.productions ? d2.productions.reduce((sum, p) => sum + p.volume_tonnes, 0) : 0;
+
+            document.getElementById('comp-vol-1').innerText = v1.toLocaleString() + " T (Cumul)";
+            document.getElementById('comp-vol-2').innerText = v2.toLocaleString() + " T (Cumul)";
+
+            // --- PRÉPARATION DES DONNÉES PAR SECTEUR ---
+            const stats1 = getSectorTotals(d1);
+            const stats2 = getSectorTotals(d2);
+
+            const dataSet1 = [stats1['AGRICULTURE'], stats1['ELEVAGE'], stats1['PECHE']];
+            const dataSet2 = [stats2['AGRICULTURE'], stats2['ELEVAGE'], stats2['PECHE']];
+
+            // GRAPHIQUE BARRES GROUPÉES
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            if (compareChart) compareChart.destroy();
+
+            compareChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['🌾 Agriculture', '🐄 Élevage', '🐟 Pêche'],
+                    datasets: [
+                        {
+                            label: d1.nom_departement,
+                            data: dataSet1,
+                            backgroundColor: 'rgba(46, 204, 113, 0.8)',
+                            borderColor: '#2ecc71',
+                            borderWidth: 2,
+                            borderRadius: 5
+                        },
+                        {
+                            label: d2.nom_departement,
+                            data: dataSet2,
+                            backgroundColor: 'rgba(231, 76, 60, 0.8)',
+                            borderColor: '#e74c3c',
+                            borderWidth: 2,
+                            borderRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f0f0f0' },
+                            title: { display: true, text: 'Volume (Tonnes)' }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw.toLocaleString() + ' T';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Ouverture Modale
+            var myModal = new bootstrap.Modal(document.getElementById('comparisonModal'));
+            myModal.show();
+        }
+
+        // --- 4. SIDEBAR DASHBOARD (MODE NORMAL) ---
+        function updateSidebar(props, layerId) {
+            const container = document.getElementById('sidebar-details');
+
+            let totalVolume = 0;
+            let labels = [];
+            let dataValues = [];
+            let bgColors = [];
+
+            if (props.productions && props.productions.length > 0) {
+                props.productions.forEach(p => {
+                    totalVolume += p.volume_tonnes;
+                    labels.push(p.filiere);
+                    dataValues.push(p.volume_tonnes);
+                    bgColors.push(`hsl(${Math.random() * 360}, 70%, 50%)`);
+                });
+            } else {
+                labels.push("Aucune donnée");
+                dataValues.push(0);
+                bgColors.push("#ccc");
+            }
+
+            // Bouton Zoom Manuel
+            const zoomBtn = `<button class="btn btn-sm btn-outline-primary ms-auto" onclick="zoomToLayer(${layerId})"><i class="fas fa-search-plus"></i> Zoom</button>`;
+
+            let html = `
+                <div class="d-flex align-items-center mb-2">
+                    <h2 class="mb-0 text-primary fw-bold me-2">${props.nom_departement}</h2>
+                    ${zoomBtn}
+                </div>
+                <span class="badge bg-secondary mb-4">${props.nom_region}</span>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <div class="stat-card text-center">
+                            <h4 class="fw-bold text-success">${props.productions.length}</h4>
+                            <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Filières</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card text-center">
+                            <h4 class="fw-bold text-primary">${totalVolume.toLocaleString()}</h4>
+                            <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Tonnes (Tot)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-uppercase text-muted fw-bold mb-3"><i class="fas fa-chart-pie"></i> Répartition</h6>
+                <div class="chart-container mb-4">
+                    <canvas id="prodChart"></canvas>
+                </div>
+
+                <h6 class="text-uppercase text-muted fw-bold mb-3"><i class="fas fa-list-ul"></i> Détails</h6>
+                <ul class="list-group list-group-flush mb-5">
+            `;
+
+            if (props.productions) {
+                props.productions.forEach(p => {
+                    html += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-bottom">
+                            <span>${p.filiere}</span>
+                            <span class="fw-bold text-dark">${p.volume_tonnes.toLocaleString()} <small>T</small></span>
+                        </li>
+                    `;
+                });
+            }
+            html += `</ul>`;
+            container.innerHTML = html;
+
+            // GRAPHIQUE DOUGHNUT
+            const ctx = document.getElementById('prodChart').getContext('2d');
+            if (currentChart) currentChart.destroy();
+
+            currentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataValues,
+                        backgroundColor: bgColors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        // --- 5. GESTION DES CLICS (LE CERVEAU) ---
+        function onFeatureClick(e) {
+            var layer = e.target;
+
+            if (comparisonMode) {
+                // Logique Comparateur
+                handleComparisonClick(layer);
+            } else {
+                // Logique Standard
+                if (selectedLayer) {
+                    geojsonLayer.resetStyle(selectedLayer); // Reset ancien
+                }
+
+                selectedLayer = layer;
+
+                // Style de sélection (Bordure épaisse)
+                layer.setStyle({
+                    weight: 4,
+                    color: '#2c3e50',
+                    fillOpacity: 0.8
+                });
+                layer.bringToFront();
+
+                // On met juste à jour la sidebar (PAS DE ZOOM AUTO)
+                updateSidebar(layer.feature.properties, L.stamp(layer));
+            }
+        }
+
+        // Fonction Zoom Manuel (appelée par le bouton sidebar)
+        window.zoomToLayer = function(leafletId) {
+            const layer = geojsonLayer.getLayer(leafletId);
+            if (layer) {
+                map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+            }
+        };
+
+        // --- 6. CHARGEMENT API ---
+        fetch('/api/departements/')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer = L.geoJSON(data, {
+                    style: defaultStyle,
+                    onEachFeature: function(feature, layer) {
+                        layer.on({
+                            mouseover: highlightFeature,
+                            mouseout: resetHighlight,
+                            click: onFeatureClick
+                        });
+
+                        allData.push({
+                            id: L.stamp(layer),
+                            text: feature.properties.nom_departement,
+                            layer: layer
+                        });
+                    }
+                }).addTo(map);
+
+                // Initialisation Select2 (Recherche)
+                $('#search-box').select2({
+                    data: allData,
+                    placeholder: "🔍 Rechercher un département...",
+                    allowClear: true,
+                    language: { noResults: () => "Aucun résultat trouvé" }
+                });
+
+                // Zoom sur recherche
+                $('#search-box').on('select2:select', function (e) {
+                    var selectedId = e.params.data.id;
+                    var item = allData.find(x => x.id == selectedId);
+                    if (item) {
+                        map.fitBounds(item.layer.getBounds());
+                        item.layer.fire('click'); // Simuler le clic pour ouvrir sidebar
+                    }
+                });
+
+                // Masquer Loader
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 500);
+                }, 800);
+            })
+            .catch(err => console.error("Erreur API:", err));
+
+        // --- 7. FILTRES THÉMATIQUES ---
+        function filterMap(productName) {
+            // UI Update
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            event.target.closest('button').classList.add('active');
+
+            geojsonLayer.eachLayer(function(layer) {
+                const prods = layer.feature.properties.productions;
+                const target = prods ? prods.find(p => p.filiere.includes(productName)) : null;
+
+                if (target) {
+                    // Echelle de couleur simple
+                    let opacity = target.volume_tonnes > 20000 ? 1 :
+                                  target.volume_tonnes > 10000 ? 0.7 : 0.4;
+
+                    layer.setStyle({
+                        fillColor: '#2980b9', // Bleu Thématique
+                        fillOpacity: opacity,
+                        weight: 1,
+                        color: 'white'
+                    });
+                } else {
+                    // Grisé
+                    layer.setStyle({
+                        fillColor: '#ecf0f1',
+                        fillOpacity: 0.3,
+                        weight: 1
+                    });
+                }
+            });
+        }
+
+        function resetMap() {
+            if (comparisonMode) toggleComparisonMode(); // Sortir du mode compare
+
+            // Reset Styles
+            selectedLayer = null;
+            geojsonLayer.eachLayer(function(layer) {
+                geojsonLayer.resetStyle(layer);
+            });
+
+            // UI Reset
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            document.querySelector('.filter-container .btn-filter:nth-child(3)').classList.add('active');
+
+            // Vue Globale
+            map.setView([7.3697, 12.3547], 6);
+        }
+
+    </script>
+</body>
+</html>

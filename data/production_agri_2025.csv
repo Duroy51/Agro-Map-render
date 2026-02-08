@@ -1,0 +1,120 @@
+region,departement,secteur,filiere,volume_tonnes,annee
+Adamaoua,Djerem,ELEVAGE,Apiculture (Miel),1513,2025
+Adamaoua,Djerem,AGRICULTURE,Pomme de terre,8851,2025
+Adamaoua,Djerem,AGRICULTURE,Maïs,24558,2025
+Adamaoua,Djerem,AGRICULTURE,Millet,4929,2025
+Adamaoua,Faro et Déo,AGRICULTURE,Maïs,23175,2025
+Adamaoua,Faro et Déo,AGRICULTURE,Igname,6046,2025
+Adamaoua,Faro et Déo,AGRICULTURE,Millet,5564,2025
+Adamaoua,Faro et Déo,ELEVAGE,Bovins,86065,2025
+Adamaoua,Faro et Déo,AGRICULTURE,Pomme de terre,5448,2025
+Adamaoua,Faro et Déo,ELEVAGE,Apiculture (Miel),726,2025
+Adamaoua,Mayo Banyo,ELEVAGE,Bovins,70683,2025
+Adamaoua,Mayo Banyo,AGRICULTURE,Pomme de terre,4440,2025
+Adamaoua,Mayo Banyo,AGRICULTURE,Maïs,14476,2025
+Adamaoua,Mayo Banyo,AGRICULTURE,Millet,9830,2025
+Adamaoua,Mayo Banyo,ELEVAGE,Apiculture (Miel),994,2025
+Adamaoua,Mbéré,ELEVAGE,Apiculture (Miel),2053,2025
+Adamaoua,Mbéré,AGRICULTURE,Millet,7075,2025
+Adamaoua,Mbéré,AGRICULTURE,Pomme de terre,2140,2025
+Adamaoua,Mbéré,ELEVAGE,Bovins,54730,2025
+Adamaoua,Mbéré,AGRICULTURE,Maïs,11838,2025
+Adamaoua,Vina,ELEVAGE,Apiculture (Miel),1687,2025
+Adamaoua,Vina,AGRICULTURE,Maïs,12791,2025
+Adamaoua,Vina,ELEVAGE,Bovins,46573,2025
+Adamaoua,Vina,AGRICULTURE,Pomme de terre,6285,2025
+Centre,Haute Sanaga,PECHE,Pisciculture,1319,2025
+Centre,Haute Sanaga,AGRICULTURE,Ananas,15215,2025
+Centre,Haute Sanaga,AGRICULTURE,Manioc,15613,2025
+Centre,Haute Sanaga,AGRICULTURE,Arachide,4024,2025
+Centre,Haute Sanaga,AGRICULTURE,Banane Plantain,26041,2025
+Centre,Lekié,AGRICULTURE,Ananas,14482,2025
+Centre,Lekié,AGRICULTURE,Banane Plantain,13669,2025
+Centre,Lekié,ELEVAGE,Volaille,9900,2025
+Centre,Lekié,ELEVAGE,Porcins,9080,2025
+Centre,Lekié,PECHE,Pisciculture,1263,2025
+Centre,Lekié,AGRICULTURE,Manioc,37952,2025
+Centre,Mbam et Inoubou,ELEVAGE,Volaille,15457,2025
+Centre,Mbam et Inoubou,AGRICULTURE,Cacao,61573,2025
+Centre,Mbam et Inoubou,AGRICULTURE,Banane Plantain,9065,2025
+Centre,Mbam et Inoubou,AGRICULTURE,Arachide,5373,2025
+Centre,Mbam et Inoubou,AGRICULTURE,Manioc,27563,2025
+Centre,Mbam et Kim,AGRICULTURE,Arachide,8600,2025
+Centre,Mbam et Kim,AGRICULTURE,Ananas,12192,2025
+Centre,Mbam et Kim,ELEVAGE,Volaille,10057,2025
+Centre,Mbam et Kim,AGRICULTURE,Cacao,50038,2025
+Centre,Mbam et Kim,AGRICULTURE,Manioc,23954,2025
+Centre,Mefou et Afamba,AGRICULTURE,Banane Plantain,16679,2025
+Centre,Mefou et Afamba,AGRICULTURE,Cacao,24904,2025
+Centre,Mefou et Afamba,ELEVAGE,Volaille,11439,2025
+Centre,Mefou et Afamba,PECHE,Pisciculture,1153,2025
+Centre,Mefou et Afamba,AGRICULTURE,Ananas,8239,2025
+Centre,Mefou et Akono,AGRICULTURE,Manioc,18602,2025
+Centre,Mefou et Akono,AGRICULTURE,Cacao,18143,2025
+Centre,Mefou et Akono,ELEVAGE,Volaille,7157,2025
+Centre,Mefou et Akono,AGRICULTURE,Ananas,5927,2025
+Centre,Mfoundi,AGRICULTURE,Manioc,23483,2025
+Centre,Mfoundi,ELEVAGE,Volaille,15520,2025
+Centre,Mfoundi,AGRICULTURE,Ananas,16049,2025
+Centre,Mfoundi,PECHE,Pisciculture,1151,2025
+Centre,Mfoundi,AGRICULTURE,Banane Plantain,20848,2025
+Centre,Mfoundi,AGRICULTURE,Arachide,3089,2025
+Centre,Nyong et Kéllé,AGRICULTURE,Cacao,69973,2025
+Centre,Nyong et Kéllé,AGRICULTURE,Arachide,3423,2025
+Centre,Nyong et Kéllé,AGRICULTURE,Manioc,27801,2025
+Centre,Nyong et Kéllé,AGRICULTURE,Banane Plantain,21838,2025
+Centre,Nyong et Kéllé,ELEVAGE,Porcins,3885,2025
+Centre,Nyong et Mfoumou,AGRICULTURE,Manioc,18083,2025
+Centre,Nyong et Mfoumou,AGRICULTURE,Ananas,12085,2025
+Centre,Nyong et Mfoumou,ELEVAGE,Porcins,7436,2025
+Centre,Nyong et Mfoumou,AGRICULTURE,Cacao,58496,2025
+Centre,Nyong et Mfoumou,PECHE,Pisciculture,860,2025
+Centre,Nyong et So'o,ELEVAGE,Porcins,6469,2025
+Centre,Nyong et So'o,ELEVAGE,Volaille,15200,2025
+Centre,Nyong et So'o,AGRICULTURE,Manioc,29226,2025
+Centre,Nyong et So'o,AGRICULTURE,Ananas,12753,2025
+Centre,Nyong et So'o,AGRICULTURE,Cacao,38226,2025
+Centre,Nyong et So'o,PECHE,Pisciculture,645,2025
+Est,Boumba et Ngoko,AGRICULTURE,Café Robusta,6098,2025
+Est,Boumba et Ngoko,AGRICULTURE,Banane Plantain,9426,2025
+Est,Boumba et Ngoko,AGRICULTURE,Manioc,12344,2025
+Est,Boumba et Ngoko,AGRICULTURE,Macabo,3189,2025
+Est,Boumba et Ngoko,PECHE,Pêche continentale,1837,2025
+Est,Boumba et Ngoko,AGRICULTURE,Cacao,13627,2025
+Est,Haut Nyong,PECHE,Pêche continentale,2006,2025
+Est,Haut Nyong,AGRICULTURE,Macabo,6350,2025
+Est,Haut Nyong,AGRICULTURE,Banane Plantain,11976,2025
+Est,Haut Nyong,AGRICULTURE,Manioc,22980,2025
+Est,Haut Nyong,AGRICULTURE,Cacao,16732,2025
+Est,Haut Nyong,AGRICULTURE,Café Robusta,5661,2025
+Est,Kadey,AGRICULTURE,Banane Plantain,20105,2025
+Est,Kadey,AGRICULTURE,Manioc,15916,2025
+Est,Kadey,PECHE,Pêche continentale,4610,2025
+Est,Kadey,AGRICULTURE,Cacao,19955,2025
+Est,Lom et Djerem,AGRICULTURE,Café Robusta,8086,2025
+Est,Lom et Djerem,AGRICULTURE,Macabo,7456,2025
+Est,Lom et Djerem,AGRICULTURE,Manioc,20787,2025
+Est,Lom et Djerem,AGRICULTURE,Cacao,12104,2025
+Est,Lom et Djerem,PECHE,Pêche continentale,3779,2025
+Est,Lom et Djerem,AGRICULTURE,Banane Plantain,9955,2025
+Littoral,Moungo,AGRICULTURE,Banane dessert,69317,2025
+Littoral,Moungo,AGRICULTURE,Poivre de Penja,839,2025
+Littoral,Moungo,PECHE,Pêche maritime,28723,2025
+Littoral,Moungo,PECHE,Crevette,4107,2025
+Littoral,Moungo,AGRICULTURE,Palmier à huile,26044,2025
+Littoral,Nkam,PECHE,Crevette,3924,2025
+Littoral,Nkam,AGRICULTURE,Palmier à huile,38798,2025
+Littoral,Nkam,PECHE,Pêche maritime,25476,2025
+Littoral,Nkam,AGRICULTURE,Poivre de Penja,568,2025
+Littoral,Nkam,AGRICULTURE,Banane dessert,103949,2025
+Littoral,Sanaga Maritime,PECHE,Crevette,846,2025
+Littoral,Sanaga Maritime,AGRICULTURE,Poivre de Penja,335,2025
+Littoral,Sanaga Maritime,AGRICULTURE,Banane dessert,83776,2025
+Littoral,Sanaga Maritime,AGRICULTURE,Taro,10503,2025
+Littoral,Sanaga Maritime,AGRICULTURE,Papaye,3248,2025
+Littoral,Wouri,AGRICULTURE,Palmier à huile,36201,2025
+Littoral,Wouri,AGRICULTURE,Banane dessert,93600,2025
+Littoral,Wouri,AGRICULTURE,Taro,14494,2025
+Littoral,Wouri,AGRICULTURE,Papaye,2591,2025
+Littoral,Wouri,PECHE,Pêche maritime,32365,2025
+Littoral,Wouri,AGRICULTURE,Poivre de Penja,1125,2025
