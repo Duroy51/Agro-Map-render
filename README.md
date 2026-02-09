@@ -152,8 +152,8 @@ Les volumes de production intégrés au système résultent du croisement de plu
 ## Auteurs
 
 **Groupe de Projet 5GI - Promotion 2026**
-*   [Nom de l'étudiant 1] - Chef de Projet / Backend Lead
-*   [Nom de l'étudiant 2] - Architecte Base de Données Spatiale
-*   [Nom de l'étudiant 3] - Frontend Developer / UI-UX
-*   [Nom de l'étudiant 4] - Analyste de Données
-*   [Nom de l'étudiant 5] - Intégrateur & Testeur
+*   KOGHENE LADZOU ERIC  23P752  - Chef de Projet 
+*   MBOGNENG TETSIEBOU JUNIOR  21P072 
+*   TIEUGUIM JOFACK PAVEL  23P760 
+*   FOLONG TAFOUKEU ZIDANE  21P011 
+*   NGHOGUE TAPTUE FRANCK RODDIER  21P279
